@@ -63,14 +63,6 @@ class WikiApi(object):
             results.append(slug[0])
         return results
 
-    def build_url(self, params):
-        default_params = {'format': 'xml'}
-        query_params = dict(
-            list(default_params.items()) + list(params.items()))
-        query_params = urllib.urlencode(query_params)
-        return '{0}://{1}.{2}?{3}'.format(
-            uri_scheme, self.options['locale'], api_uri, query_params)
-
     def get_article(self, title):
         url = '{0}://{1}.{2}{3}'.format(
             uri_scheme, self.options['locale'], article_uri, title)
