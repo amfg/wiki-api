@@ -76,7 +76,7 @@ class WikiApi(object):
             html('body').find('.image img').attr('src'))
         data['summary'] = ""
         data['full'] = ""
-        references = html('body').find('.web')
+        references = html('body').find('.references')
         data['url'] = url
 
         # gather references
