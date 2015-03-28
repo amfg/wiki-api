@@ -4,11 +4,8 @@
 
 A basic python library enabling access to Wikipedia.org's search results and articles.
 
-## How To Use
+This version has been forked from the original to play nice with python 3, removing the obsolete urllib and using the requests library. All functionality stays the same.
 
-### Install WikiApi
-
-    sudo pip install wikiapi
 
 ### Create an instance of wiki-api
 ```python
@@ -34,15 +31,6 @@ article.url => 'http://en.wikipedia.org/wiki/Barack_Obama'
 
 ## Requirements
 
-    1. Python 2.7
+    1. Python 3+
     2. Python requests "requests"
     3. PyQuery "pyquery"
-
-## Tests
-
-```
-pip install nosetests
-nosetests
-```
-
-
