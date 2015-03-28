@@ -1,10 +1,7 @@
-from __future__ import absolute_import
-
 import hashlib
 import logging
 import os
 import re
-import urllib
 from xml.dom import minidom
 
 import requests
@@ -19,6 +16,7 @@ article_uri = 'wikipedia.org/wiki/'
 
 #common sub sections to exclude from output
 unwanted_sections = [
+    'External links and resources',
     'External links',
     'Navigation menu',
     'See also',
@@ -49,8 +47,9 @@ class WikiApi(object):
             'search': terms,
             'format': 'xml'
         }
-        url = self.build_url(search_params)
-        resp = self.get(url)
+        
+        url = "{0}://{1}.{2}".format(uri_scheme, self.options['locale'], api_uri)
+        resp = self.get(url, search_params)
 
         #parse search results
         xmldoc = minidom.parseString(resp)
@@ -64,6 +63,14 @@ class WikiApi(object):
             results.append(slug[0])
         return results
 
+    def build_url(self, params):
+        default_params = {'format': 'xml'}
+        query_params = dict(
+            list(default_params.items()) + list(params.items()))
+        query_params = urllib.urlencode(query_params)
+        return '{0}://{1}.{2}?{3}'.format(
+            uri_scheme, self.options['locale'], api_uri, query_params)
+
     def get_article(self, title):
         url = '{0}://{1}.{2}{3}'.format(
             uri_scheme, self.options['locale'], article_uri, title)
@@ -75,8 +82,8 @@ class WikiApi(object):
         paras = html('.mw-content-ltr').find('p')
         data['image'] = 'http:{0}'.format(
             html('body').find('.image img').attr('src'))
-        data['summary'] = str()
-        data['full'] = unicode()
+        data['summary'] = ""
+        data['full'] = ""
         references = html('body').find('.web')
         data['url'] = url
 
@@ -119,13 +126,6 @@ class WikiApi(object):
                 return article
         return None
 
-    def build_url(self, params):
-        default_params = {'format': 'xml'}
-        query_params = dict(
-            list(default_params.items()) + list(params.items()))
-        query_params = urllib.urlencode(query_params)
-        return '{0}://{1}.{2}?{3}'.format(
-            uri_scheme, self.options['locale'], api_uri, query_params)
 
     def _get_cache_item_path(self, url):
         """
@@ -157,14 +157,14 @@ class WikiApi(object):
         with open(file_path, 'w+') as f:
             f.write(resp)
 
-    def get(self, url):
+    def get(self, url, params={}):
         if self.caching_enabled:
             cached_item_path = self._get_cache_item_path(url)
             cached_resp = self._get_cached_response(cached_item_path)
             if cached_resp:
                 return cached_resp
 
-        r = requests.get(url)
+        r = requests.get(url, params=params)
         response = r.content
 
         if self.caching_enabled:
@@ -184,7 +184,7 @@ class WikiApi(object):
         #remove sub heading edits tags
         string = re.sub(r'\s*\[\s*edit\s*\]\s*', '\n', string)
         #remove unwanted areas
-        string = re.sub("|".join(unwanted_sections), '', string, re.IGNORECASE)
+        string = re.sub("|".join(unwanted_sections), '', string, re.I|re.M|re.S)
         return string
 
 
