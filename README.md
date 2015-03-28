@@ -2,7 +2,7 @@
 [![Build Status](https://travis-ci.org/richardasaurus/wiki-api.png?branch=master)](https://travis-ci.org/richardasaurus/wiki-api)
 [![Downloads](https://pypip.in/d/wikiapi/badge.png)](https://crate.io/packages/wikiapi/)
 
-A basic python library enabling access to Wikipedia.org's search results and articles.
+A basic python3 library enabling access to Wikipedia.org's search results and articles.
 
 This version has been forked from the original to play nice with python 3, removing the obsolete urllib and using the requests library. All functionality stays the same.
 
